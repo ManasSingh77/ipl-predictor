@@ -1,0 +1,27 @@
+<%- include('../partials/header') %>
+
+<h2>Declare Winner for Yesterday's Match(es)</h2>
+<% if (matches.length === 0) { %>
+  <p>No matches found for yesterday.</p>
+<% } else { %>
+  <% matches.forEach(function(match) { %>
+    <form action="/admin/declare-winner" method="POST" style="margin-bottom: 20px;">
+      <div>
+        <h3>Match on <%= match.date.toDateString() %></h3>
+        <p>Teams: <%= match.teams.join(' vs ') %></p>
+      </div>
+      <div>
+        <label for="winner_<%= match._id %>">Winner:</label>
+        <select name="winner" id="winner_<%= match._id %>" required>
+          <% match.teams.forEach(function(team) { %>
+            <option value="<%= team %>"><%= team %></option>
+          <% }); %>
+        </select>
+      </div>
+      <input type="hidden" name="matchId" value="<%= match._id %>">
+      <button type="submit">Declare Winner</button>
+    </form>
+  <% }); %>
+<% } %>
+
+<%- include('../partials/footer') %>

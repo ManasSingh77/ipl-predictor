@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IPL Predictor</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>IPL Predictor</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/leaderboard">Leaderboard</a>
+      <% if (currentUser) { %>
+        <span>Welcome, <%= currentUser.username %></span>
+        <a href="/users/logout">Logout</a>
+      <% } else { %>
+        <a href="/users/login">Login</a>
+        <a href="/users/register">Register</a>
+      <% } %>
+      <% if (currentUser && currentUser.isAdmin) { %>
+        <a href="/admin/add-match">Add Match</a>
+        <a href="/admin/declare-winner">Declare Winner</a>
+      <% } %>
+    </nav>
+  </header>
+  <div class="container">

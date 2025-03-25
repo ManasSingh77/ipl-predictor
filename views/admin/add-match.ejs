@@ -1,0 +1,16 @@
+<%- include('../partials/header') %>
+
+<h2>Add New Match</h2>
+<form action="/admin/add-match" method="POST">
+  <div>
+    <label for="date">Match Date:</label>
+    <input type="date" name="date" id="date" required>
+  </div>
+  <div>
+    <label for="teams">Teams (comma separated):</label>
+    <input type="text" name="teams" id="teams" placeholder="Team1, Team2" required>
+  </div>
+  <button type="submit">Add Match</button>
+</form>
+
+<%- include('../partials/footer') %>
