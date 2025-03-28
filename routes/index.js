@@ -30,27 +30,45 @@ router.get('/vote/:matchId', async (req, res) => {
 // Process vote submission
 router.post('/vote/:matchId', async (req, res) => {
   const { team, confirm } = req.body;
+
+  // Check if the user is logged in
+  if (!req.session.user) {
+    return res.status(401).send('Please log in first to vote.');
+  }
+
   if (confirm !== 'yes') {
     return res.redirect('/');
   }
 
-  const match = await Match.findById(req.params.matchId);
-  const userId = req.session.user._id;
-  const username = req.session.user.username; // Assuming username is stored in session
+  try {
+    const match = await Match.findById(req.params.matchId);
+    if (!match) {
+      return res.status(404).send('Match not found.');
+    }
 
-  // Check if the user has already voted
-  if (match.votes.some(vote => vote.user.toString() === userId)) {
-    return res.send('You have already voted for this match.');
+    const userId = req.session.user._id;
+    const username = req.session.user.username; // Assuming username is stored in session
+
+    // Check if the user has already voted
+    if (match.votes.some(vote => vote.user.toString() === userId)) {
+      return res.send('You have already voted for this match.');
+    }
+
+    // Save vote
+    match.votes.push({ user: userId, selectedTeam: team, confirmed: true });
+
+    // Save username in the new voteUsers array
+    if (!match.voteUsers) {
+      match.voteUsers = [];
+    }
+    match.voteUsers.push({ username });
+
+    await match.save();
+    res.redirect('/');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
-
-  // Save vote
-  match.votes.push({ user: userId, selectedTeam: team, confirmed: true });
-
-  // Save username in the new voteUsers array
-  match.voteUsers.push({ username });
-
-  await match.save();
-  res.redirect('/');
 });
 
 // Leaderboard page
