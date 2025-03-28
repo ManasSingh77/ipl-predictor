@@ -8,7 +8,8 @@ const MatchSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     selectedTeam: String,
     confirmed: { type: Boolean, default: false }
-  }]
+  }],
+  voteUsers: [{ username: String }] // New array to store usernames of voters
 });
 
 module.exports = mongoose.model('Match', MatchSchema);

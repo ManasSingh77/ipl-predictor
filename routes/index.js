@@ -33,12 +33,22 @@ router.post('/vote/:matchId', async (req, res) => {
   if (confirm !== 'yes') {
     return res.redirect('/');
   }
+
   const match = await Match.findById(req.params.matchId);
-  // Check if vote already exists for current user
-  if (match.votes.some(vote => vote.user.toString() === req.session.user._id)) {
+  const userId = req.session.user._id;
+  const username = req.session.user.username; // Assuming username is stored in session
+
+  // Check if the user has already voted
+  if (match.votes.some(vote => vote.user.toString() === userId)) {
     return res.send('You have already voted for this match.');
   }
-  match.votes.push({ user: req.session.user._id, selectedTeam: team, confirmed: true });
+
+  // Save vote
+  match.votes.push({ user: userId, selectedTeam: team, confirmed: true });
+
+  // Save username in the new voteUsers array
+  match.voteUsers.push({ username });
+
   await match.save();
   res.redirect('/');
 });
