@@ -19,26 +19,26 @@ router.get('/', async (req, res) => {
     });
     
     res.render('index', { matches });
-  });
+});
 
 // Vote page - show match details and voting options
 router.get('/vote/:matchId', async (req, res) => {
-  const match = await Match.findById(req.params.matchId);
-  res.render('vote', { match });
+  try {
+    const match = await Match.findById(req.params.matchId);
+    if (!match) {
+      return res.status(404).send('Match not found.');
+    }
+
+    res.render('vote', { match, message: '', messageColor: '' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Process vote submission
 router.post('/vote/:matchId', async (req, res) => {
   const { team, confirm } = req.body;
-
-  // Check if the user is logged in
-  if (!req.session.user) {
-    return res.status(401).send('Please log in first to vote.');
-  }
-
-  if (confirm !== 'yes') {
-    return res.redirect('/');
-  }
 
   try {
     const match = await Match.findById(req.params.matchId);
@@ -46,12 +46,17 @@ router.post('/vote/:matchId', async (req, res) => {
       return res.status(404).send('Match not found.');
     }
 
+    // Check if user is logged in
+    if (!req.session.user) {
+      return res.render('vote', { match, message: 'Please log in first to vote.', messageColor: 'red' });
+    }
+
     const userId = req.session.user._id;
-    const username = req.session.user.username; // Assuming username is stored in session
+    const username = req.session.user.username;
 
     // Check if the user has already voted
     if (match.votes.some(vote => vote.user.toString() === userId)) {
-      return res.send('You have already voted for this match.');
+      return res.render('vote', { match, message: 'You have already voted for this match.', messageColor: 'red' });
     }
 
     // Save vote
@@ -64,10 +69,10 @@ router.post('/vote/:matchId', async (req, res) => {
     match.voteUsers.push({ username });
 
     await match.save();
-    res.redirect('/');
+    return res.render('vote', { match, message: 'Vote submitted successfully!', messageColor: 'green' });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    return res.status(500).send('Internal Server Error');
   }
 });
 

@@ -1,23 +1,22 @@
 <%- include('partials/header') %>
 
-<h2>Vote for the Match</h2>
-<p>Match Date: <%= match.date.toDateString() %></p>
-<p>Select a team to vote for:</p>
-<form action="/vote/<%= match._id %>" method="POST" onsubmit="return confirmVote()">
-  <% match.teams.forEach(function(team) { %>
-    <div>
-      <input type="radio" id="<%= team %>" name="team" value="<%= team %>" required>
-      <label for="<%= team %>"><%= team %></label>
-    </div>
-  <% }); %>
-  <input type="hidden" name="confirm" value="yes">
-  <button type="submit">Submit Vote</button>
-</form>
+<div class="container">
+  <h2>Vote for the Match</h2>
+  <p>Match Date: <%= match.date.toDateString() %></p>
 
-<script>
-  function confirmVote() {
-    return confirm("Are you sure you want to vote for this team?");
-  }
-</script>
+  <% if (message) { %>
+    <p class="error-message"><%= message %></p>
+  <% } %>
+
+  <form action="/vote/<%= match._id %>" method="POST">
+    <% match.teams.forEach(function(team) { %>
+      <div>
+        <input type="radio" id="<%= team %>" name="team" value="<%= team %>" required>
+        <label for="<%= team %>"><%= team %></label>
+      </div>
+    <% }); %>
+    <button type="submit">Submit Vote</button>
+  </form>
+</div>
 
 <%- include('partials/footer') %>

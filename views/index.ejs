@@ -1,17 +1,19 @@
 <%- include('partials/header') %>
-<h2>Welcome to IPL Predictor</h2>
-<% if (matches && matches.length > 0) { %>
-  <h3>Today's Match(es):</h3>
-  <ul>
-    <% matches.forEach(function(match) { %>
-      <li>
-        <a href="/vote/<%= match._id %>">
-          Match on <%= match.date.toDateString() %>: <%= match.teams.join(" vs ") %>
-        </a>
-      </li>
-    <% }); %>
-  </ul>
-<% } else { %>
-  <p>No matches scheduled for today.</p>
-<% } %>
+<div class="container">
+  <h2>Welcome to IPL Predictor</h2>
+  <% if (matches && matches.length > 0) { %>
+    <h3>Today's Match(es):</h3>
+    <ul>
+      <% matches.forEach(function(match) { %>
+        <li>
+          <a href="/vote/<%= match._id %>">
+            Match on <%= match.date.toDateString() %>: <%= match.teams.join(" vs ") %>
+          </a>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>No matches scheduled for today.</p>
+  <% } %>
+</div>
 <%- include('partials/footer') %>
