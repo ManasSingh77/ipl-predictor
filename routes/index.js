@@ -51,18 +51,18 @@ router.post('/vote/:matchId', async (req, res) => {
       return res.render('vote', { match, message: 'Please log in first to vote.', messageColor: 'red' });
     }
 
-    // const userId = req.session.user._id;
-    // const username = req.session.user.username;
+    const userId = req.session.user._id;
+    const username = req.session.user.username;
 
-    // // Get current UTC time
-    // const now = new Date();
-    // const IST_7_30_PM_UTC = new Date();
-    // IST_7_30_PM_UTC.setUTCHours(14, 0, 0, 0); // 7:30 PM IST == 14:00 UTC
+    // Get current UTC time
+    const now = new Date();
+    const IST_7_30_PM_UTC = new Date();
+    IST_7_30_PM_UTC.setUTCHours(14, 0, 0, 0); // 7:30 PM IST == 14:00 UTC
 
-    // // Restrict voting if current time is after 7:30 PM IST
-    // if (now >= IST_7_30_PM_UTC) {
-    //   return res.render('vote', { match, message: 'Voting for this match has closed.', messageColor: 'red' });
-    // }
+    // Restrict voting if current time is after 7:30 PM IST
+    if (now >= IST_7_30_PM_UTC) {
+      return res.render('vote', { match, message: 'Voting for this match has closed.', messageColor: 'red' });
+    }
 
     // Check if the user has already voted
     if (match.votes.some(vote => vote.user.toString() === userId)) {
